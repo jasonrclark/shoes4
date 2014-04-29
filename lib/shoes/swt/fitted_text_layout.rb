@@ -13,6 +13,10 @@ class Shoes
         @font_factory  = TextFontFactory.new
       end
 
+      def dispose
+        layout.dispose unless layout.disposed?
+      end
+
       def get_location(cursor, trailing=false)
         @layout.get_location(cursor, trailing)
       end

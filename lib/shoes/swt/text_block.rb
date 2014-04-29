@@ -52,6 +52,8 @@ class Shoes
       end
 
       def contents_alignment(current_position)
+        dispose_prior_layouts
+
         fitter = TextBlockFitter.new(self, current_position)
         @fitted_layouts = fitter.fit_it_in
 
@@ -64,6 +66,10 @@ class Shoes
         if trailing_newline?
           bump_absolutes_to_next_line
         end
+      end
+
+      def dispose_prior_layouts
+        @fitted_layouts.each(&:dispose)
       end
 
       def first_layout
