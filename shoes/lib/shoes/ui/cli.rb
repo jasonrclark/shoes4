@@ -1,5 +1,6 @@
 require 'optparse'
 require 'shoes'
+require 'shoes/ui/manual'
 
 class Shoes
   class CLI
