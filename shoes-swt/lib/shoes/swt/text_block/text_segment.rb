@@ -85,7 +85,12 @@ class Shoes
         end
 
         def height
-          layout.bounds.height - layout.spacing
+          line_count = layout.line_count
+          h = (line_count - 1) * layout.spacing
+          line_count.times do |i|
+            h += layout.get_line_bounds(i).height
+          end
+          h
         end
 
         def last_line_height
