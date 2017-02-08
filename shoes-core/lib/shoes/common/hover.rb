@@ -4,6 +4,21 @@ class Shoes
     module Hover
       attr_reader :hover_blk, :leave_blk
 
+      def self.define_style_callbacks
+        {
+          hover: :hover_from_style,
+          leave: :leave_from_style
+        }
+      end
+
+      def hover_from_style(new_styles)
+        hover(&new_styles[:hover])
+      end
+
+      def leave_from_style(new_styles)
+        leave(&new_styles[:leave])
+      end
+
       def self.included(base)
         clazz = Class.new {}
         name = base.name.split("::").last

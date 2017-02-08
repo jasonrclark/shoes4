@@ -43,7 +43,7 @@ class Shoes
         @style.merge!(arg_styles)
         @style = StyleNormalizer.new.normalize(@style)
 
-        set_hovers(@style)
+        #set_hovers(@style)
       end
 
       def create_style_hash
@@ -63,9 +63,23 @@ class Shoes
         def style_with(*styles)
           @supported_styles = []
 
+          setup_style_callbacks
           unpack_style_groups(styles)
           define_reader_methods
           define_writer_methods
+        end
+
+        def setup_style_callbacks
+          @style_callbacks = {}
+          self.ancestors.each do |ancestor|
+            if ancestor.respond_to?(:define_style_callbacks)
+              @style_callbacks.merge!(ancestor.define_style_callbacks)
+            end
+          end
+        end
+
+        def style_callbacks
+          @style_callbacks
         end
 
         def unpack_style_groups(styles)
@@ -125,10 +139,18 @@ class Shoes
         normalized_style = StyleNormalizer.new.normalize(new_styles)
         @style.merge! normalized_style
 
+        new_styles.keys.each do |style_key|
+          callback = self.class.style_callbacks[style_key]
+          if callback
+            require 'pry';binding.pry;
+            send(callback, new_styles)
+          end
+        end
+
         set_dimensions(new_styles)
         set_visibility(new_styles)
         set_coloring(new_styles)
-        set_hovers(new_styles)
+        #set_hovers(new_styles)
         set_translate(new_styles)
         set_click(new_styles)
         set_state(new_styles)
@@ -151,10 +173,10 @@ class Shoes
         update_stroke if new_styles.include?(:stroke)
       end
 
-      def set_hovers(new_styles)
-        hover(&new_styles[:hover]) if new_styles.include?(:hover)
-        leave(&new_styles[:leave]) if new_styles.include?(:leave)
-      end
+      #def set_hovers(new_styles)
+        #hover(&new_styles[:hover]) if new_styles.include?(:hover)
+        #leave(&new_styles[:leave]) if new_styles.include?(:leave)
+      #end
 
       def set_translate(new_styles)
         clear_translate if new_styles.include?(:translate)
